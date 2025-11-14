@@ -1,0 +1,16 @@
+
+import 'package:complaint_app/template/data/models/template_model.dart';
+
+import '../../../../../core/databases/api/api_consumer.dart';
+import '../../../../../core/databases/api/end_points.dart';
+import '../../../../../core/params/params.dart';
+
+class TemplateRemoteDataSource {
+  final ApiConsumer api;
+
+  TemplateRemoteDataSource({required this.api});
+  Future<TemplateModel> getTemplate(TemplateParams params) async {
+    final response = await api.get("${EndPoints.template}/${params.id}");
+    return TemplateModel.fromJson(response);
+  }
+}
