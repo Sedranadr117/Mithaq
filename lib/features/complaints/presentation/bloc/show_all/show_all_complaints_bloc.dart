@@ -10,6 +10,7 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
   List<ComplaintListEntity> complaints = [];
   bool isLoading = false;
   String? currentFilter;
+
   int currentPage = 0;
   ComplaintsBloc({required this.getAllComplaint}) : super(ComplaintInitial()) {
     on<GetAllComplaintsEvent>((event, emit) async {

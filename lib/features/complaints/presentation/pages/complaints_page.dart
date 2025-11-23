@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                             // إذا ما في → رسالة
                             return Center(
                               child: Text(
-                                "لا يوجد شكاوى $filterName",
+                                "لا يوجد شكاوى $filterName ",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 14.sp),
                               ),

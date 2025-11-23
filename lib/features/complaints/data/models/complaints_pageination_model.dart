@@ -1,4 +1,5 @@
 import 'package:complaint_app/features/complaints/data/models/comlaints_list_model.dart';
+import 'package:complaint_app/features/complaints/data/models/complaints_model.dart';
 import 'package:complaint_app/features/complaints/domain/entities/complaints_pageination_entity.dart';
 
 class ComplaintsPageModel extends ComplaintsPageEntity {
