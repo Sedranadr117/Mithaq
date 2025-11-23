@@ -12,17 +12,17 @@ class AppTheme {
 
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
-        primary: AppColors.primaryLight,
+        primary: AppColors.primaryColor,
         onPrimary: AppColors.onPrimaryLight,
-        primaryContainer: AppColors.primaryVariantLight,
+        primaryContainer: AppColors.primaryVariant,
         onPrimaryContainer: AppColors.onPrimaryLight,
-        secondary: AppColors.secondaryLight,
+        secondary: AppColors.secondaryColor,
         onSecondary: AppColors.onSecondaryLight,
-        secondaryContainer: AppColors.secondaryVariantLight,
+        secondaryContainer: AppColors.secondaryVariant,
         onSecondaryContainer: AppColors.onSecondaryLight,
-        tertiary: AppColors.secondaryLight,
+        tertiary: AppColors.secondaryColor,
         onTertiary: AppColors.onSecondaryLight,
-        tertiaryContainer: AppColors.secondaryVariantLight,
+        tertiaryContainer: AppColors.secondaryVariant,
         onTertiaryContainer: AppColors.onSecondaryLight,
         error: AppColors.errorLight,
         onError: AppColors.onErrorLight,
@@ -33,12 +33,12 @@ class AppTheme {
         outlineVariant: AppColors.dividerLight,
         shadow: AppColors.shadowLight,
         scrim: AppColors.shadowLight,
-        inverseSurface: AppColors.surfaceLight,
-        onInverseSurface: AppColors.onSurfaceLight,
-        inversePrimary: AppColors.primaryLight,
+        inverseSurface: AppColors.primaryColor,
+        onInverseSurface: AppColors.onPrimaryLight,
+        inversePrimary: AppColors.secondaryVariant,
       ),
 
-      scaffoldBackgroundColor: AppColors.backgroundColor,
+      scaffoldBackgroundColor: AppColors.backgroundLight,
       cardColor: AppColors.cardLight,
       dividerColor: AppColors.dividerLight,
 
@@ -55,7 +55,7 @@ class AppTheme {
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primaryLight,
+        backgroundColor: AppColors.primaryColor,
         foregroundColor: AppColors.onPrimaryLight,
         elevation: 4.0,
         shape: RoundedRectangleBorder(
@@ -66,7 +66,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: AppColors.onPrimaryLight,
-          backgroundColor: AppColors.primaryLight,
+          backgroundColor: AppColors.primaryColor,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -80,17 +80,21 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surfaceLight,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        fillColor: AppColors.backgroundLight,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: const BorderSide(color: AppColors.borderLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide:
-              const BorderSide(color: AppColors.primaryLight, width: 2.0),
+          borderSide: const BorderSide(
+            color: AppColors.primaryColor,
+            width: 2.0,
+          ),
         ),
         labelStyle: GoogleFonts.tajawal(
           fontSize: 16,

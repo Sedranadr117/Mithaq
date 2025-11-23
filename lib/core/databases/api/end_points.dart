@@ -1,16 +1,21 @@
 class EndPoints {
-  static const String baserUrl = "http://89.116.236.10:13000/api/v1/";
+  static const String baserUrl = "http://89.116.236.10:3200/api/v1/";
 
   static const String template = "template/";
 
-  // Auth endpoints
-  static const String addPharmacy = "pharmacy/complete-registration";
-  static const String mangerLogin = "pharmacy/login";
-    static const String getAreas = "areas";
+  static const String logIn = "citizens/login";
+  static const String register = "citizens/register";
+  static const String verifyOtp = "citizens/verify-otp";
+  static const String reSendOtp = "citizens/resend-otp";
+
 }
 
 class ApiKeys {
   // Common
   static const String id = "id";
-  static const String name = "name";
+  static const String token = "token";
+  static const String email = "email";
+  static const String firstName = "firstName";
+  static const String lastName = "lastName";
+  static const String isActive = "isActive";
 }

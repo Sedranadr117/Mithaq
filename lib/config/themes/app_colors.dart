@@ -1,44 +1,44 @@
 import 'dart:ui';
 
 class AppColors {
-  static const Color backgroundColor = Color(0xfff3f4f6);
-  static const Color appColor2 = Color(0xFF0b3c6a);
-  static const Color appColor4 = Color(0xff9ecbf5);
+  // Primary
+  static const Color primaryColor = Color(0xFF215E68); // الأساسي
+  static const Color primaryVariant = Color(
+    0x2C8D82FF,
+  ); // أغمق شوي للضغط / hover
 
-   // Primary & secondary colors
-  static const Color primaryLight = Color(0xff10599d);
-  static const Color primaryVariantLight = Color(0xFF5da8ee);
-  static const Color secondaryLight = Color(0xFF9ecbf5);
-  static const Color secondaryVariantLight = Color(0xFF4A8BC2);
+  // Secondary (مستخرج من درجة أفتح من الأساسي)
+  static const Color secondaryColor = Color(0xFF3B7C88);
+  static const Color secondaryVariant = Color(0xFF5BA0AD);
 
-  // Backgrounds & surfaces
-  static const Color backgroundLight = Color(0xFFF8FAFC);
-  static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color cardLight = Color(0xFFFFFFFF);
-  static const Color dialogLight = Color(0xFFFFFFFF);
+  // Backgrounds (فاتحة جداً لتفتح النفس)
+  static const Color backgroundLight = Color(0xfff3f4f6);
+  static const Color background = Color(0xfff3f4f6);
+  static const Color surfaceLight = Color(0xFFE0EFF1);
+  static const Color cardLight = Color(0xFFE0EFF1);
+  static const Color dialogLight = Color(0xFFE0EFF1);
 
-  // Feedback
-  static const Color errorLight = Color(0xFFDC2626);
-  static const Color successLight = Color(0xFF10B981);
-  static const Color warningLight = Color(0xFFF59E0B);
+  // Text Colors
+  static const Color textPrimaryLight = Color(0xFF1C4349); // أغمق لقراءة قوية
+  static const Color textSecondaryLight = Color(0xFF37646B); // أخف شوية
+  static const Color textDisabledLight = Color(0xFF7DA1A6); // رمادي مائل للأزرق
 
-  // Text
-  static const Color textPrimaryLight = Color(0xFF0F172A);
-  static const Color textSecondaryLight = Color(0xFF64748B);
-  static const Color textDisabledLight = Color(0xFF94A3B8);
+  // Borders & Dividers
+  static const Color borderLight = Color(0xFFD1E5E7);
+  static const Color dividerLight = Color(0xFFAECED1);
 
-  // Border & divider
-  static const Color borderLight = Color(0xFFE2E8F0);
-  static const Color dividerLight = Color(0xFFE2E8F0);
-
-  // On-colors
+  // On Colors
   static const Color onPrimaryLight = Color(0xFFFFFFFF);
   static const Color onSecondaryLight = Color(0xFFFFFFFF);
-  static const Color onBackgroundLight = Color(0xFF0F172A);
-  static const Color onSurfaceLight = Color(0xFF0F172A);
+  static const Color onBackgroundLight = Color(0xFF1C4349);
+  static const Color onSurfaceLight = Color(0xFF1C4349);
+
+  // Status Colors
+  static const Color errorLight = Color(0xFFD75454);
+  static const Color successLight = Color(0xFF1FAC82);
+  static const Color warningLight = Color(0xFFE6A43B);
   static const Color onErrorLight = Color(0xFFFFFFFF);
 
   // Shadows
-  static const Color shadowLight = Color(0x0A000000);
-
+  static const Color shadowLight = Color(0x1A000000); // 10% opacity
 }
