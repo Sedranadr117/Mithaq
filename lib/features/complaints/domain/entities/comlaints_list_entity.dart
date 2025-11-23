@@ -61,9 +61,9 @@ class ComplaintListEntity {
     switch (status) {
       case "PENDING":
         return const Color(0xFF3B7C88);
-      case "IN_REVIEW":
+      case "IN_PROGRESS":
         return const Color(0xFFE6A43B);
-      case "COMPLETED":
+      case "CLOSED":
         return const Color(0xFF1FAC82);
       case "REJECTED":
         return const Color(0xFFD75454);

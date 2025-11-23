@@ -47,16 +47,14 @@ class DioConsumer extends ApiConsumer {
     try {
       final authHeader = await _getAuthorizationHeader();
 
+      // Let Dio automatically set multipart/form-data content type with boundary when FormData is used
       var res = await dio.post(
         path,
         data: isFormData
             ? (data is FormData ? data : FormData.fromMap(data))
             : data,
         queryParameters: queryParameters,
-        options: Options(
-          headers: authHeader,
-          contentType: isFormData ? 'multipart/form-data' : 'application/json',
-        ),
+        options: Options(headers: authHeader),
       );
 
       return res.data;

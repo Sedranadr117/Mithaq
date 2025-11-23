@@ -35,9 +35,13 @@ class ComplaintListModel extends ComplaintListEntity {
       respondedAt: json['respondedAt'],
       respondedById: json['respondedById'],
       respondedByName: json['respondedByName'],
-      attachments: (json['attachments'] as List)
-          .map<String>((e) => e['downloadUrl'] as String)
-          .toList(),
+      attachments:
+          (json['attachments'] as List?)
+              ?.map<String>(
+                (e) => (e as Map<String, dynamic>)['downloadUrl'] as String,
+              )
+              .toList() ??
+          [],
       citizenId: json['citizenId'],
       citizenName: json['citizenName'],
       createdAt: json['createdAt'],
