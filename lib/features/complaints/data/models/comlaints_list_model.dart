@@ -1,7 +1,7 @@
 import 'package:complaint_app/features/complaints/domain/entities/comlaints_list_entity.dart';
 
 class ComplaintListModel extends ComplaintListEntity {
-  const ComplaintListModel({
+  ComplaintListModel({
     required super.id,
     required super.complaintType,
     required super.governorate,
@@ -35,7 +35,13 @@ class ComplaintListModel extends ComplaintListEntity {
       respondedAt: json['respondedAt'],
       respondedById: json['respondedById'],
       respondedByName: json['respondedByName'],
-      attachments: List<String>.from(json['attachments'] ?? []),
+      attachments:
+          (json['attachments'] as List?)
+              ?.map<String>(
+                (e) => (e as Map<String, dynamic>)['downloadUrl'] as String,
+              )
+              .toList() ??
+          [],
       citizenId: json['citizenId'],
       citizenName: json['citizenName'],
       createdAt: json['createdAt'],

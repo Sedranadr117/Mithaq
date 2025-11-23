@@ -43,22 +43,15 @@ class DioConsumer extends ApiConsumer {
   }) async {
     try {
       final authHeader = await _getAuthorizationHeader();
-      // 2. إنشاء خريطة ترويسات جديدة وإضافة Content-Type
-      final Map<String, dynamic> headers = Map.from(authHeader);
 
-      if (!isFormData) {
-        // 🚀 التصحيح: إذا لم يكن الطلب Form Data، نعتبره JSON ونحدد Content-Type: application/json
-        // هذا يحل مشكلة رسالة التحذير السابقة
-        headers['Content-Type'] = 'application/json';
-      } else {
-        headers['Content-Type'] = "multipart/form-data";
-      }
-
+      // Let Dio automatically set multipart/form-data content type with boundary when FormData is used
       var res = await dio.post(
         path,
-        data: isFormData ? FormData.fromMap(data) : data,
+        data: isFormData
+            ? (data is FormData ? data : FormData.fromMap(data))
+            : data,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        options: Options(headers: authHeader),
       );
 
       return res.data;

@@ -13,18 +13,20 @@ class ComplaintsPageModel extends ComplaintsPageEntity {
   });
 
   factory ComplaintsPageModel.fromJson(Map<String, dynamic> json) {
-    final complaints = (json['content'] as List)
-        .map((e) => ComplaintListModel.fromJson(e))
-        .toList();
+    final complaints =
+        (json['content'] as List?)
+            ?.map((e) => ComplaintListModel.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
 
     return ComplaintsPageModel(
       content: complaints,
-      page: json['page'],
-      size: json['size'],
-      totalElements: json['totalElements'],
-      totalPages: json['totalPages'],
-      hasNext: json['hasNext'],
-      hasPrevious: json['hasPrevious'],
+      page: json['page'] ?? 0,
+      size: json['size'] ?? 10,
+      totalElements: json['totalElements'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+      hasNext: json['hasNext'] ?? false,
+      hasPrevious: json['hasPrevious'] ?? false,
     );
   }
 }
