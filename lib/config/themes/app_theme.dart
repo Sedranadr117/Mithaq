@@ -80,7 +80,11 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
+<<<<<<< HEAD
         fillColor: AppColors.surfaceLight,
+=======
+        fillColor: AppColors.backgroundLight,
+>>>>>>> auth
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,

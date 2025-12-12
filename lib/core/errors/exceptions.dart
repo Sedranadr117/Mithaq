@@ -65,16 +65,11 @@ class UnknownException extends ServerException {
 class ConflictException extends ServerException {
   ConflictException(super.errorModel);
 }
-
-void handleHttpException(Object e) {
-  if (e is HttpException) {
-    throw ConnectionErrorException(
-      ErrorModel(errorMessage: e.message, status: 500),
-    );
-  } else {
-    throw UnknownException(ErrorModel(errorMessage: e.toString(), status: 500));
-  }
+class BadRequestException extends ServerException {
+  BadRequestException(super.errorModel);
 }
+
+
 
 handleDioException(DioException e) {
   switch (e.type) {

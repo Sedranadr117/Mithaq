@@ -16,7 +16,11 @@ class FilePickerWidget extends StatelessWidget {
     return InkWell(
       onTap: () async {
         FilePickerResult? result = await FilePicker.platform.pickFiles(
+<<<<<<< HEAD
           allowMultiple: false,
+=======
+          allowMultiple: true,
+>>>>>>> auth
           type: FileType.custom,
           allowedExtensions: ['jpg', 'png', 'jpeg', 'pdf'],
         );

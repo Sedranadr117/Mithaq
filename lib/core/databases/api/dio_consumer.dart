@@ -1,3 +1,4 @@
+import 'package:complaint_app/config/helper/injection_container.dart';
 import 'package:complaint_app/core/databases/api/api_consumer.dart';
 import 'package:complaint_app/core/databases/api/end_points.dart';
 import 'package:complaint_app/core/databases/cache/cache_helper.dart';
@@ -6,44 +7,45 @@ import 'package:dio/dio.dart';
 
 class DioConsumer extends ApiConsumer {
   final Dio dio;
-  final SecureStorageHelper _secureStorageHelper = SecureStorageHelper.instance;
-  final String _tokenKey = 'auth_token';
 
-  DioConsumer({required this.dio}) {
+  DioConsumer({required this.dio, required this.secureStorageHelper}) {
     dio.options.baseUrl = EndPoints.baserUrl;
+    dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: true,
+        error: true,
+        logPrint: (obj) => print("📡 $obj"),
+      ),
+    );
   }
 
   Future<Map<String, dynamic>> _getAuthorizationHeader() async {
-    // final token = await _secureStorageHelper.getString(_tokenKey);
-    // if (token != null && token.isNotEmpty) {
-    //   return {'Authorization': 'Bearer $token'};
-    // }
-    // return {};
-    const fixedToken =
-        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGF6YXRhaGFuQGdtYWlsLmNvbSIsImlhdCI6MTc2MzU2MDgyMCwiZXhwIjoxNzYzNjQ3MjIwfQ.obyfTBx4RzYzDo6CI62x-aiBGMRuAzh40GXPyU7x2-U';
-    return {'Authorization': 'Bearer $fixedToken'};
+    final token = await secureStorageHelper.getString(_tokenKey);
+    if (token != null && token.isNotEmpty) {
+      return {'Authorization': 'Bearer $token'};
+    }
+    return {};
   }
 
-  //!POST
+//!POST
   @override
-  @override
-  Future post(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    bool isFormData = false,
-  }) async {
+  Future post(String path,
+      {dynamic data,
+      Map<String, dynamic>? queryParameters,
+      bool isFormData = false}) async {
     try {
-      final authHeader = await _getAuthorizationHeader();
-
-      var res = await dio.post(
+      dio.post(
         path,
-        data: isFormData ? FormData.fromMap(data) : data,
+        data: isFormData
+            ? (data is FormData ? data : FormData.fromMap(data))
+            : data,
         queryParameters: queryParameters,
         options: Options(headers: authHeader),
       );
-
-      return res.data; // << هاد لازم ترجعيه
     } on DioException catch (e) {
       handleDioException(e);
     }

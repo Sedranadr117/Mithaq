@@ -2172,6 +2172,7 @@ class CustomIconWidget extends StatelessWidget {
       'zoom_in_map': Icons.zoom_in_map,
       'zoom_out': Icons.zoom_out,
       'zoom_out_map': Icons.zoom_out_map,
+
     };
 
     // Check if the icon exists
