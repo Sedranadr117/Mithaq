@@ -2,12 +2,12 @@
 
 import 'package:complaint_app/features/auth/domain/entities/auth_entity.dart';
 import 'package:complaint_app/features/auth/domain/usecases/login_usecase.dart';
+import 'package:complaint_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:complaint_app/features/auth/domain/usecases/otp_usecase.dart';
 import 'package:complaint_app/features/auth/domain/usecases/register_usecase.dart';
 import 'package:complaint_app/features/auth/domain/usecases/resend_otp_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // [cite: 46]
-import '../../../../core/errors/failure.dart'; // [cite: 42]
 import '../../../../core/params/params.dart'; // [cite: 42]
 
 part 'auth_event.dart';
@@ -18,17 +18,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Register registerUseCase;
   final VerifyOtp otpUseCase;
   final ResendOtp resendOtpUseCase;
+  final Logout logoutUseCase;
 
   AuthBloc({
     required this.loginUseCase,
     required this.registerUseCase,
     required this.otpUseCase,
     required this.resendOtpUseCase,
+    required this.logoutUseCase,
   }) : super(AuthInitial()) {
     on<LoginUserEvent>(_onLoginUserEvent);
     on<RegisterUserEvent>(_onRegisterUserEvent);
     on<VerifyOtpEvent>(_onVerifyOtpEvent);
     on<ResendOtpEvent>(_onResendOtpEvent);
+    on<LogoutEvent>(_onLogoutEvent);
   }
 
   // ---------------- Login Handler ----------------
@@ -102,5 +105,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  // ---------------- Logout Handler ----------------
 
+  void _onLogoutEvent(LogoutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoadingState());
+
+    final result = await logoutUseCase();
+
+    result.fold(
+      (failure) => emit(AuthErrorState(message: failure.errMessage)),
+      (_) => emit(const LogoutSuccessState()),
+    );
+  }
 }

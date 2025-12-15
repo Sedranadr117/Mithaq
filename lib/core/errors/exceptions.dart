@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:complaint_app/core/errors/error_model.dart';
 import 'package:dio/dio.dart';
 
@@ -74,11 +76,43 @@ handleDioException(DioException e) {
       if (e.response != null && e.response!.data != null) {
         throw ConnectionErrorException(ErrorModel.fromJson(e.response!.data));
       }
+
+      // Check for SocketException (connection abort, network issues)
+      String errorMessage = 'Connection error: ${e.message ?? "Unknown error"}';
+
+      if (e.error is SocketException) {
+        final socketError = e.error as SocketException;
+        if (socketError.message.contains('Software caused connection abort') ||
+            socketError.message.contains('Connection aborted')) {
+          errorMessage =
+              'تم قطع الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.';
+        } else if (socketError.message.contains('Connection refused')) {
+          errorMessage =
+              'لا يمكن الاتصال بالخادم. يرجى المحاولة مرة أخرى لاحقاً.';
+        } else if (socketError.message.contains('Network is unreachable')) {
+          errorMessage =
+              'لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.';
+        } else {
+          errorMessage =
+              'خطأ في الاتصال: ${socketError.message}. يرجى المحاولة مرة أخرى.';
+        }
+      } else if (e.message != null) {
+        if (e.message!.contains('Software caused connection abort') ||
+            e.message!.contains('Connection aborted')) {
+          errorMessage =
+              'تم قطع الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.';
+        } else if (e.message!.contains('Connection refused')) {
+          errorMessage =
+              'لا يمكن الاتصال بالخادم. يرجى المحاولة مرة أخرى لاحقاً.';
+        } else if (e.message!.contains('Network is unreachable') ||
+            e.message!.contains('No Internet connection')) {
+          errorMessage =
+              'لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك والمحاولة مرة أخرى.';
+        }
+      }
+
       throw ConnectionErrorException(
-        ErrorModel(
-          status: 0,
-          errorMessage: 'Connection error: ${e.message ?? "Unknown error"}',
-        ),
+        ErrorModel(status: 0, errorMessage: errorMessage),
       );
     case DioExceptionType.badCertificate:
       if (e.response != null && e.response!.data != null) {
@@ -98,7 +132,7 @@ handleDioException(DioException e) {
         ErrorModel(
           status: 408,
           errorMessage:
-              'Connection timeout: ${e.message ?? "Request timed out"}',
+              'انتهت مهلة الاتصال. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.',
         ),
       );
 
@@ -109,7 +143,7 @@ handleDioException(DioException e) {
       throw ReceiveTimeoutException(
         ErrorModel(
           status: 408,
-          errorMessage: 'Receive timeout: ${e.message ?? "Response timed out"}',
+          errorMessage: 'انتهت مهلة استلام الاستجابة. يرجى المحاولة مرة أخرى.',
         ),
       );
 
@@ -120,8 +154,7 @@ handleDioException(DioException e) {
       throw SendTimeoutException(
         ErrorModel(
           status: 408,
-          errorMessage:
-              'Send timeout: ${e.message ?? "Request send timed out"}',
+          errorMessage: 'انتهت مهلة إرسال الطلب. يرجى المحاولة مرة أخرى.',
         ),
       );
 
@@ -136,7 +169,16 @@ handleDioException(DioException e) {
           throw BadResponseException(ErrorModel.fromJson(e.response!.data));
 
         case 401: //unauthorized
-          throw UnauthorizedException(ErrorModel.fromJson(e.response!.data));
+          final model = ErrorModel.fromJson(e.response!.data);
+          final isBadCredentials = model.errorMessage.toLowerCase().contains(
+            'bad credentials',
+          );
+          final friendlyMessage = isBadCredentials
+              ? 'بيانات الدخول غير صحيحة. يرجى التأكد من البريد وكلمة المرور.'
+              : model.errorMessage;
+          throw UnauthorizedException(
+            ErrorModel(status: 401, errorMessage: friendlyMessage),
+          );
 
         case 403: //forbidden
           throw ForbiddenException(ErrorModel.fromJson(e.response!.data));
@@ -161,8 +203,27 @@ handleDioException(DioException e) {
       );
 
     case DioExceptionType.unknown:
+      // Check if it's a network-related unknown error
+      String errorMessage = e.toString();
+      if (e.error is SocketException) {
+        final socketError = e.error as SocketException;
+        if (socketError.message.contains('Software caused connection abort') ||
+            socketError.message.contains('Connection aborted')) {
+          errorMessage =
+              'تم قطع الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.';
+        } else {
+          errorMessage =
+              'خطأ في الاتصال: ${socketError.message}. يرجى المحاولة مرة أخرى.';
+        }
+      } else if (e.message != null &&
+          (e.message!.contains('Software caused connection abort') ||
+              e.message!.contains('Connection aborted'))) {
+        errorMessage =
+            'تم قطع الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.';
+      }
+
       throw UnknownException(
-        ErrorModel(errorMessage: e.toString(), status: 500),
+        ErrorModel(errorMessage: errorMessage, status: 500),
       );
   }
 }

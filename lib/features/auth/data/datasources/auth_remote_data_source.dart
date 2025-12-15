@@ -12,16 +12,19 @@ class AuthRemoteDataSource {
     return AuthModel.fromJson(response);
   }
 
-  Future<void>  register(SignUpParams params) async {
+  Future<void> register(SignUpParams params) async {
     await api.post(EndPoints.register, data: params.toJson());
   }
 
   Future<void> verifyOtp(VerifyOtpParams params) async {
-   await api.post(EndPoints.verifyOtp, data: params.toJson());
+    await api.post(EndPoints.verifyOtp, data: params.toJson());
   }
 
-  Future<void>  reSendOtp(ReSendOtpParams params) async {
- await api.post(EndPoints.reSendOtp, data: params.toJson());
+  Future<void> reSendOtp(ReSendOtpParams params) async {
+    await api.post(EndPoints.reSendOtp, data: params.toJson());
+  }
 
+  Future<void> logout() async {
+    await api.post(EndPoints.logout, data: {});
   }
 }

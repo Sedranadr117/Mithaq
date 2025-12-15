@@ -8,7 +8,10 @@ import 'package:complaint_app/features/complaints/presentation/widgets/custome_t
 import 'package:complaint_app/features/complaints/presentation/widgets/drop_menue_widget.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/file_picker_widget.dart';
 import 'package:complaint_app/features/complaints/presentation/pages/complaints_page.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_event.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -119,6 +122,17 @@ class _AddComplaintsPageState extends State<AddComplaintsPage> {
             context.read<ComplaintsBloc>().add(
               GetAllComplaintsEvent(refresh: true),
             );
+
+            // Refresh notifications after a delay to allow server to create notification
+            // The server might need a few seconds to process and create the notification
+            Future.delayed(const Duration(seconds: 3), () {
+              if (context.mounted) {
+                context.read<NotificationBloc>().add(FetchNotificationsEvent());
+                debugPrint(
+                  '🔄 Refreshing notifications after complaint creation',
+                );
+              }
+            });
 
             context.popPage(HomePage());
           } else if (state is AddComplaintError) {
@@ -325,6 +339,10 @@ class _AddComplaintsPageState extends State<AddComplaintsPage> {
 
                                   context.read<AddComplaintBloc>().add(
                                     SendComplaintEvent(params),
+                                  );
+
+                                  debugPrint(
+                                    '🔄 Refreshing notifications after complaint creation',
                                   );
                                 },
                           child: Text("إرسال الشكوى"),

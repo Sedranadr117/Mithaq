@@ -7,6 +7,7 @@ import 'package:complaint_app/features/auth/presentation/pages/sign_up_page.dart
 import 'package:complaint_app/features/auth/presentation/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
   @override
@@ -25,7 +26,9 @@ class WelcomeScreen extends StatelessWidget {
         ),
       );
     }
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: context.colors.onSecondaryContainer,
       body: Directionality(
         textDirection: TextDirection.rtl,
@@ -36,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
-                  SizedBox(height: 10.0.h), 
+                  SizedBox(height: 10.0.h),
                   Text(
                     "أهلاً وسهلاً بك في ميثاق",
                     style: context.text.titleLarge!.copyWith(
@@ -45,7 +48,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 5.0.h), 
+                  SizedBox(height: 5.0.h),
                   SizedBox(
                     height: 35.0.h,
                     width: 80.0.w,

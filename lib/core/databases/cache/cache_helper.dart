@@ -10,10 +10,7 @@ class SecureStorageHelper {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   /// Save data (String, bool, int, double, map, list)
-  Future<void> saveData({
-    required String key,
-    required dynamic value,
-  }) async {
+  Future<void> saveData({required String key, required dynamic value}) async {
     if (value is String) {
       await _storage.write(key: key, value: value);
     } else {
@@ -55,5 +52,40 @@ class SecureStorageHelper {
   Future<bool> containsKey(String key) async {
     final all = await _storage.readAll();
     return all.containsKey(key);
+  }
+
+  /// Get saved user email
+  Future<String?> getSavedUserEmail() async {
+    return await getString('USER_EMAIL');
+  }
+
+  /// Get saved user first name
+  Future<String?> getSavedUserFirstName() async {
+    return await getString('USER_FIRST_NAME');
+  }
+
+  /// Get saved user last name
+  Future<String?> getSavedUserLastName() async {
+    return await getString('USER_LAST_NAME');
+  }
+
+  /// Get saved auth token
+  Future<String?> getSavedAuthToken(String key) async {
+    return await getString(key);
+  }
+
+  /// Check if user is logged in (has token)
+  Future<bool> isUserLoggedIn() async {
+    final token = await getSavedAuthToken('AUTH_TOKEN');
+    return token != null && token.isNotEmpty;
+  }
+
+  /// Clear all user data (logout)
+  Future<void> clearUserData() async {
+    await remove('AUTH_TOKEN');
+    await remove('USER_EMAIL');
+    await remove('USER_FIRST_NAME');
+    await remove('USER_LAST_NAME');
+    await remove('USER_IS_ACTIVE');
   }
 }

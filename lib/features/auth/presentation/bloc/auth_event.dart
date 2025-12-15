@@ -58,3 +58,9 @@ class ResendOtpEvent extends AuthEvent {
   @override
   List<Object> get props => [email];
 }
+
+// ---------------- Logout Event ----------------
+
+class LogoutEvent extends AuthEvent {
+  const LogoutEvent();
+}

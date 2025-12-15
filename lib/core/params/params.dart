@@ -25,7 +25,7 @@ class SignInParams {
   final String password;
   SignInParams({required this.email, required this.password});
 
-   Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {'email': email, 'password': password};
   }
 }
@@ -35,7 +35,7 @@ class VerifyOtpParams {
   final String otp;
   VerifyOtpParams({required this.email, required this.otp});
 
-     Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {'email': email, 'otpCode': otp};
   }
 }
@@ -43,10 +43,11 @@ class VerifyOtpParams {
 class ReSendOtpParams {
   final String email;
   ReSendOtpParams({required this.email});
-       Map<String, dynamic> toJson() {
-    return {'email': email,};
+  Map<String, dynamic> toJson() {
+    return {'email': email};
   }
 }
+
 class AddComplaintParams {
   final String complaintType;
   final String governorate;
@@ -77,4 +78,64 @@ class AddComplaintParams {
       "attachments": attachments,
     };
   }
+}
+
+class NotificationParams {
+  final int page;
+  final int size;
+
+  NotificationParams({required this.page, required this.size});
+
+  Map<String, dynamic> toJson() {
+    return {'page': page, 'size': size};
+  }
+}
+
+class FcmTokenParams {
+  final String deviceToken;
+  final String deviceType;
+  final String? deviceInfo; // Optional
+
+  FcmTokenParams({
+    required this.deviceToken,
+    required this.deviceType,
+    this.deviceInfo, // Optional
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = {'token': deviceToken, 'deviceType': deviceType};
+    // Only include deviceInfo if it's provided
+    if (deviceInfo != null && deviceInfo!.isNotEmpty) {
+      json['deviceInfo'] = deviceInfo!;
+    }
+    return json;
+  }
+}
+
+class DeleteFcmTokenParams {
+  final String deviceToken;
+
+  DeleteFcmTokenParams({required this.deviceToken});
+
+  Map<String, dynamic> toJson() {
+    return {'deviceToken': deviceToken};
+  }
+}
+
+class RespondToInfoRequestParams {
+  final int infoRequestId;
+  final String responseMessage;
+  final List<PlatformFile> files;
+
+  RespondToInfoRequestParams({
+    required this.infoRequestId,
+    required this.responseMessage,
+    required this.files,
+  });
+}
+
+class MarkNotificationReadParams {
+  final int notificationId;
+
+  MarkNotificationReadParams({required this.notificationId});
 }

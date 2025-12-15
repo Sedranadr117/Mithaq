@@ -19,7 +19,7 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
 
         final Map<String, String> statusMap = {
           'جديدة': 'PENDING',
-          'قيد المعالجة': 'IN_PROGRESS',
+          'قيد المعالجة': 'IN PROGRESS',
           'منجزة': 'CLOSED',
           'مرفوضة': 'REJECTED',
         };
@@ -88,9 +88,7 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
       } catch (e) {
         isLoading = false;
         emit(
-          ComplaintError(
-            message: 'Unexpected error occurred: ${e.toString()}',
-          ),
+          ComplaintError(message: 'Unexpected error occurred: ${e.toString()}'),
         );
       }
     });

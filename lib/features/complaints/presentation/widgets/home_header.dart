@@ -1,9 +1,11 @@
 import 'package:complaint_app/config/extensions/navigator.dart';
-import 'package:complaint_app/config/helper/injection_container.dart';
 import 'package:complaint_app/config/themes/app_colors.dart';
-import 'package:complaint_app/core/databases/cache/cache_helper.dart';
-import 'package:complaint_app/features/auth/presentation/pages/welcome_page.dart';
+import 'package:complaint_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_state.dart';
+import 'package:complaint_app/features/notification/presentation/pages/notification_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeHeader extends StatefulWidget {
   final Function(String? status) onFilterChanged;
@@ -31,19 +33,100 @@ class _HomeHeaderState extends State<HomeHeader> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined, size: 22),
-                  color: AppColors.primaryColor,
-                  tooltip: 'الإشعارات',
-                  onPressed: () {},
+                BlocBuilder<NotificationBloc, NotificationState>(
+                  builder: (context, state) {
+                    bool hasUnread = false;
+
+                    if (state is NotificationSuccess) {
+                      hasUnread = state.notifications.any(
+                        (n) => n.readAt == null,
+                      );
+                    }
+
+                    return Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_outlined,
+                            size: 22,
+                          ),
+                          color: AppColors.primaryColor,
+                          tooltip: 'الإشعارات',
+                          onPressed: () {
+                            context.pushPage(NotificationPage());
+                          },
+                        ),
+
+                        if (hasUnread)
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Container(
+                              width: 5,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.error,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
+
                 IconButton(
                   icon: const Icon(Icons.logout, size: 22),
                   color: AppColors.primaryColor,
                   tooltip: 'تسجيل الخروج',
-                  onPressed: () async {
-                    await sl<SecureStorageHelper>().remove('AUTH_TOKEN');
-                    context.pushReplacementPage(WelcomeScreen());
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Theme.of(
+                          context,
+                        ).scaffoldBackgroundColor,
+                        title: const Text(
+                          "تسجيل الدخول",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        content: const Text(
+                          "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("إلغاء"),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onSurface,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () async {
+                              context.read<AuthBloc>().add(const LogoutEvent());
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "تسجيل خروج",
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ],
@@ -53,7 +136,7 @@ class _HomeHeaderState extends State<HomeHeader> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
-            "اهلاً بك،            \n       على مين بدك تشكي؟",
+            "اهلاً بك،            \n      قدّم شكواك بكل سهولة..",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w900,
               fontSize: 28,

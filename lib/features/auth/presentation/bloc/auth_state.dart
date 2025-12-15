@@ -1,5 +1,3 @@
-
-
 part of 'auth_bloc.dart';
 
 abstract class AuthState extends Equatable {
@@ -27,7 +25,6 @@ class LoginSuccessState extends AuthState {
 }
 
 class RegisterSuccessState extends AuthState {
-
   const RegisterSuccessState();
 
   @override
@@ -38,7 +35,9 @@ class OtpVerificationSuccessState extends AuthState {
   // يمكن أن يحتوي على رسالة أو بيانات الجلسة
   final String message;
 
-  const OtpVerificationSuccessState({this.message = 'OTP Verified Successfully'});
+  const OtpVerificationSuccessState({
+    this.message = 'OTP Verified Successfully',
+  });
 
   @override
   List<Object> get props => [message];
@@ -51,6 +50,10 @@ class OtpResendSuccessState extends AuthState {
 
   @override
   List<Object> get props => [message];
+}
+
+class LogoutSuccessState extends AuthState {
+  const LogoutSuccessState();
 }
 
 // ---------------- Error State ----------------

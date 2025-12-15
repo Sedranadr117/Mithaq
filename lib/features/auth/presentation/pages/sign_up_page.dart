@@ -2,7 +2,6 @@ import 'package:complaint_app/config/extensions/navigator.dart';
 import 'package:complaint_app/config/extensions/theme.dart';
 import 'package:complaint_app/config/helper/validation.dart';
 import 'package:complaint_app/config/themes/app_assets.dart';
-import 'package:complaint_app/config/themes/app_icon.dart';
 import 'package:complaint_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:complaint_app/features/auth/presentation/pages/otp_page.dart';
 import 'package:complaint_app/features/auth/presentation/pages/sign_in_page.dart';
@@ -60,9 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
         listener: (context, state) {
           if (state is RegisterSuccessState) {
             context.pushReplacementPage(
-              OtpScreen(
-                email: _emailController.text,
-              ),
+              OtpScreen(email: _emailController.text),
             );
           } else if (state is AuthErrorState) {
             // إظهار رسالة الخطأ
@@ -71,7 +68,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        child:Directionality(
+        child: Directionality(
           textDirection: TextDirection.rtl,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

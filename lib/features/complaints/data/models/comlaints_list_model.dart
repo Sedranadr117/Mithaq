@@ -19,6 +19,8 @@ class ComplaintListModel extends ComplaintListEntity {
     required super.citizenName,
     super.createdAt,
     super.updatedAt,
+    super.trackingNumber,
+    super.version,
   });
 
   factory ComplaintListModel.fromJson(Map<String, dynamic> json) {
@@ -27,7 +29,7 @@ class ComplaintListModel extends ComplaintListEntity {
       List<String> parseAttachments(dynamic attachmentsData) {
         if (attachmentsData == null) return [];
         if (attachmentsData is! List) return [];
-        
+
         final List<String> result = [];
         for (var item in attachmentsData) {
           try {
@@ -35,8 +37,9 @@ class ComplaintListModel extends ComplaintListEntity {
               result.add(item);
             } else if (item is Map) {
               final mapItem = Map<String, dynamic>.from(item);
-              final url = mapItem['downloadUrl'] as String? ?? 
-                         mapItem['url'] as String?;
+              final url =
+                  mapItem['downloadUrl'] as String? ??
+                  mapItem['url'] as String?;
               if (url != null && url.isNotEmpty) {
                 result.add(url);
               }
@@ -67,6 +70,8 @@ class ComplaintListModel extends ComplaintListEntity {
         citizenName: json['citizenName'] as String? ?? '',
         createdAt: json['createdAt'] as String?,
         updatedAt: json['updatedAt'] as String?,
+        trackingNumber: json['trackingNumber'] as String?,
+        version: (json['version'] as num?)?.toInt(),
       );
     } catch (e) {
       // Return a default model with safe values if parsing fails
@@ -88,6 +93,8 @@ class ComplaintListModel extends ComplaintListEntity {
         citizenName: '',
         createdAt: null,
         updatedAt: null,
+        trackingNumber: null,
+        version: null,
       );
     }
   }

@@ -21,6 +21,8 @@ class ComplaintListEntity {
   final String citizenName;
   final String? createdAt;
   final String? updatedAt;
+  final String? trackingNumber;
+  final int? version;
 
   const ComplaintListEntity({
     required this.id,
@@ -40,13 +42,15 @@ class ComplaintListEntity {
     required this.citizenName,
     this.createdAt,
     this.updatedAt,
+    this.trackingNumber,
+    this.version,
   });
 
   String get statusText {
     switch (status) {
       case "PENDING":
         return "جديدة";
-      case "IN_PROGRESS":
+      case "IN PROGRESS":
         return "قيد المعالجة";
       case "CLOSED":
         return "منجزة";
@@ -61,7 +65,7 @@ class ComplaintListEntity {
     switch (status) {
       case "PENDING":
         return const Color(0xFF3B7C88);
-      case "IN_PROGRESS":
+      case "IN PROGRESS":
         return const Color(0xFFE6A43B);
       case "CLOSED":
         return const Color(0xFF1FAC82);

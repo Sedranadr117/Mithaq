@@ -7,6 +7,8 @@ import 'package:complaint_app/features/auth/presentation/pages/sign_up_page.dart
 import 'package:complaint_app/features/auth/presentation/widgets/custom_text_field.dart';
 import 'package:complaint_app/features/auth/presentation/widgets/main_button.dart';
 import 'package:complaint_app/features/complaints/presentation/pages/complaints_page.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
@@ -47,10 +49,16 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccessState) {
+          // Send FCM token to server after successful login
+          try {
+            context.read<NotificationBloc>().add(SendFcmTokenEvent());
+            debugPrint('📤 Sending FCM token after login...');
+          } catch (e) {
+            debugPrint('⚠️ Failed to send FCM token after login: $e');
+          }
+
           context.pushReplacementPage(HomePage());
-
         } else if (state is AuthErrorState) {
-
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -134,27 +142,41 @@ class _SignInScreenState extends State<SignInScreen> {
                             BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, state) {
                                 return MainButton(
-                                  onPressed: _onLoginPressed,
+                                  onPressed: state is AuthLoadingState
+                                      ? null
+                                      : _onLoginPressed,
                                   text: state is AuthLoadingState
-                                      ? 'جاري التحميل'
+                                      ? 'جاري التحميل...'
                                       : 'تسجيل دخول', // إظهار حالة التحميل
                                 );
                               },
                             ),
-                            SizedBox(height: 2.5.h),
-                            TextButton(
-                              onPressed: () {
-                                context.pushReplacementPage(
-                                  const SignupScreen(),
-                                );
-                              },
-                              child: Text(
-                                'لا تمتلك حساب؟ سجل حساب جديد',
-                                style: context.text.bodyMedium!.copyWith(
-                                  color: context.colors.primary,
-                                  fontWeight: FontWeight.bold,
+                            SizedBox(height: 3.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('لا تمتلك حساب؟'),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(0, 0),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    context.pushReplacementPage(
+                                      const SignupScreen(),
+                                    );
+                                  },
+                                  child: Text(
+                                    'سجل حساب جديد',
+                                    style: context.text.bodyMedium!.copyWith(
+                                      color: context.colors.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ],
                         ),

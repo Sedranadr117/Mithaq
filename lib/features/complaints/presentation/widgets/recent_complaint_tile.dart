@@ -11,7 +11,7 @@ class RecentComplaintTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      height: 13.h,
+      height: 15.h,
       margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.w),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
@@ -81,6 +81,8 @@ class RecentComplaintTile extends StatelessWidget {
                           ),
                           textAlign: TextAlign.right,
                         ),
+
+                        // Example: Add a button to respond to info request
                       ],
                     ),
 
@@ -97,7 +99,19 @@ class RecentComplaintTile extends StatelessWidget {
                         textAlign: TextAlign.right,
                       ),
                     ),
+                    SizedBox(height: 0.5.h),
 
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'رقم التتبع: ${complaint.trackingNumber ?? 'لا يوجد'}',
+                        style: context.text.bodyMedium!.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                          fontSize: 10.sp,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
                     SizedBox(height: 0.5.h),
 
                     Align(
