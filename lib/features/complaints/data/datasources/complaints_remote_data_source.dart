@@ -187,9 +187,11 @@ class ComplaintsRemoteDataSource {
     int size = 10,
   }) async {
     try {
+      final queryParams = <String, dynamic>{'page': page, 'size': size};
+
       final response = await api.get(
         EndPoints.complaints,
-        queryParameters: {'page': page, 'size': size},
+        queryParameters: queryParams,
       );
 
       if (response == null) {
@@ -219,6 +221,73 @@ class ComplaintsRemoteDataSource {
         ErrorModel(
           status: 500,
           errorMessage: 'Unexpected error getting complaints: ${e.toString()}',
+        ),
+      );
+    }
+  }
+
+  Future<ComplaintsPageModel> filterComplaints({
+    int page = 0,
+    int size = 10,
+    String? status,
+    String? type,
+    String? governorate,
+    String? governmentAgency,
+    int? citizenId,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{'page': page, 'size': size};
+
+      // Add optional filters
+      if (status != null && status.isNotEmpty) {
+        queryParams['status'] = status;
+      }
+      if (type != null && type.isNotEmpty) {
+        queryParams['type'] = type;
+      }
+      if (governorate != null && governorate.isNotEmpty) {
+        queryParams['governorate'] = governorate;
+      }
+      if (governmentAgency != null && governmentAgency.isNotEmpty) {
+        queryParams['governmentAgency'] = governmentAgency;
+      }
+      if (citizenId != null) {
+        queryParams['citizenId'] = citizenId;
+      }
+
+      final response = await api.get(
+        EndPoints.complaintsFilter,
+        queryParameters: queryParams,
+      );
+
+      if (response == null) {
+        throw ServerException(
+          ErrorModel(
+            status: 500,
+            errorMessage: 'Failed to filter complaints: response is null',
+          ),
+        );
+      }
+
+      try {
+        return ComplaintsPageModel.fromJson(response as Map<String, dynamic>);
+      } catch (e) {
+        throw ServerException(
+          ErrorModel(
+            status: 500,
+            errorMessage:
+                'Failed to parse filtered complaints response: ${e.toString()}',
+          ),
+        );
+      }
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      throw ServerException(
+        ErrorModel(
+          status: 500,
+          errorMessage:
+              'Unexpected error filtering complaints: ${e.toString()}',
         ),
       );
     }

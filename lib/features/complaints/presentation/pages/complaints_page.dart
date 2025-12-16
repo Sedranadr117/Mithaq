@@ -7,6 +7,7 @@ import 'package:complaint_app/features/complaints/presentation/bloc/show_all/sho
 import 'package:complaint_app/features/complaints/presentation/pages/add_complaints_page.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/home_header.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/recent_complaint_tile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
@@ -33,7 +34,12 @@ class _HomePageState extends State<HomePage> {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 100) {
         if (state is ComplaintSuccess && state.complaint.hasNext) {
-          bloc.add(GetAllComplaintsEvent());
+          // Pass current filter to maintain filter state during pagination
+          final filterToPass = bloc.currentFilter;
+          if (kDebugMode) {
+            print('📄 Pagination: passing filter "$filterToPass"');
+          }
+          bloc.add(GetAllComplaintsEvent(status: filterToPass));
         }
       }
     });
@@ -79,10 +85,57 @@ class _HomePageState extends State<HomePage> {
                   child: BlocBuilder<ComplaintsBloc, ComplaintsState>(
                     builder: (context, state) {
                       if (state is ComplaintLoading) {
-                        return Center(child: CircularProgressIndicator());
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        );
                       } else if (state is ComplaintSuccess) {
                         final complaints = state.allComplaints;
                         final showLoader = state.complaint.hasNext;
+                        final bloc = context.read<ComplaintsBloc>();
+                        final currentFilter = bloc.currentFilter;
+
+                        // Empty state when no complaints found
+                        if (complaints.isEmpty && !showLoader) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.inbox_outlined,
+                                  size: 64.sp,
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.3),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  currentFilter != null
+                                      ? 'لا توجد شكاوى $currentFilter'
+                                      : 'لا توجد شكاوى',
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withOpacity(0.7),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 1.h),
+                                Text(
+                                  currentFilter != null
+                                      ? 'لم يتم العثور على أي شكاوى تطابق الفلتر المحدد'
+                                      : 'لم يتم العثور على أي شكاوى بعد',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withOpacity(0.5),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
 
                         return ListView.builder(
                           padding: EdgeInsets.only(bottom: 2.h),
@@ -93,8 +146,11 @@ class _HomePageState extends State<HomePage> {
                             if (showLoader && index == complaints.length) {
                               return const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 16),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(child: CircularProgressIndicator()),
+                                  ],
                                 ),
                               );
                             }
@@ -106,8 +162,14 @@ class _HomePageState extends State<HomePage> {
                         );
                       } else if (state is ComplaintError) {
                         return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Center(child: Text(state.message)),
+                            Center(
+                              child: Text(
+                                state.message,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                             IconButton(
                               icon: Icon(Icons.refresh),
                               onPressed: () {

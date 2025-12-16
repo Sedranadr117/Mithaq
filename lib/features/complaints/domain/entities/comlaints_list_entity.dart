@@ -56,6 +56,10 @@ class ComplaintListEntity {
         return "منجزة";
       case "REJECTED":
         return "مرفوضة";
+      case "INFO REQUESTED":
+        return "طلب معلومات";
+      case "RESOLVED":
+        return "تم الحل";
       default:
         return "غير معروف";
     }
@@ -71,6 +75,10 @@ class ComplaintListEntity {
         return const Color(0xFF1FAC82);
       case "REJECTED":
         return const Color(0xFFD75454);
+      case "INFO REQUESTED":
+        return const Color(0xFF5A6FAF);
+      case "RESOLVED":
+        return const Color(0xFF1FAC82);
       default:
         return Colors.grey;
     }

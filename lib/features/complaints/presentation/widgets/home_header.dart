@@ -21,7 +21,14 @@ class _HomeHeaderState extends State<HomeHeader> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const filters = ['الكل', 'قيد المعالجة', 'مرفوضة', 'منجزة', 'جديدة'];
+    const filters = [
+      'الكل',
+      'قيد المعالجة',
+      'مرفوضة',
+      'منجزة',
+      'جديدة',
+      'طلب معلومات',
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

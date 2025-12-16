@@ -20,7 +20,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(8);
-    final borderColor = AppColors.primaryColor;
+    final borderColor = AppColors.textDisabledLight;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

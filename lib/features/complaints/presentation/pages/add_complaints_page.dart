@@ -103,6 +103,15 @@ class _AddComplaintsPageState extends State<AddComplaintsPage> {
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          onPressed: () {
+            context.popPage(HomePage());
+          },
+        ),
       ),
       body: BlocConsumer<AddComplaintBloc, AddComplaintState>(
         listener: (context, state) {

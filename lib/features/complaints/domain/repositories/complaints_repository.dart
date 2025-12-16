@@ -15,7 +15,15 @@ abstract class ComplaintRepository {
   Future<Either<Failure, ComplaintsPageEntity>> getAllComplaints({
     int page = 0,
     int size = 10,
+  });
+  Future<Either<Failure, ComplaintsPageEntity>> filterComplaints({
+    int page = 0,
+    int size = 10,
     String? status,
+    String? type,
+    String? governorate,
+    String? governmentAgency,
+    int? citizenId,
   });
   Future<Either<Failure, ComplaintEntity>> respondToInfoRequest({
     required RespondToInfoRequestParams params,

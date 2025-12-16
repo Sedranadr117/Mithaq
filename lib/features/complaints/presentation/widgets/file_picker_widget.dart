@@ -1,3 +1,4 @@
+import 'package:complaint_app/config/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -68,15 +69,19 @@ class FilePickerWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.transparent,
-          border: Border.all(color: Colors.grey.shade400),
+          border: Border.all(color: AppColors.textDisabledLight),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             Icon(Icons.attach_file, color: Theme.of(context).primaryColor),
           ],

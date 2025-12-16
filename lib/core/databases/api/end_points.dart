@@ -9,6 +9,7 @@ class EndPoints {
   static const String reSendOtp = "citizens/resend-otp";
   static const String logout = "auth/logout";
   static const String complaints = "complaints";
+  static const String complaintsFilter = "complaints/filter";
   static const String notifications = "notifications";
   static const String registerToken = "notifications/register-token";
   static const String unRegisterToken = "notifications/unregister-token";

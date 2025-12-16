@@ -11,12 +11,27 @@ class GetAllComplaint {
   Future<Either<Failure, ComplaintsPageEntity>> call({
     int page = 0,
     int size = 10,
-    String? status,
   }) async {
-    return await repository.getAllComplaints(
+    return await repository.getAllComplaints(page: page, size: size);
+  }
+
+  Future<Either<Failure, ComplaintsPageEntity>> filter({
+    int page = 0,
+    int size = 10,
+    String? status,
+    String? type,
+    String? governorate,
+    String? governmentAgency,
+    int? citizenId,
+  }) async {
+    return await repository.filterComplaints(
       page: page,
       size: size,
       status: status,
+      type: type,
+      governorate: governorate,
+      governmentAgency: governmentAgency,
+      citizenId: citizenId,
     );
   }
 }

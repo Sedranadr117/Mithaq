@@ -4,6 +4,7 @@ import 'package:complaint_app/core/params/params.dart';
 import 'package:complaint_app/features/complaints/presentation/bloc/respond_info_request/respond_info_request_bloc.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/custome_text_filed.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/file_picker_widget.dart';
+import 'package:complaint_app/features/complaints/presentation/widgets/info_request_shimmer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,7 +140,7 @@ class _RespondToInfoRequestPageContentState
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('حدث خطأ: $errorMessage'),
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(context).colorScheme.error,
                 duration: const Duration(seconds: 4),
               ),
             );
@@ -410,10 +411,7 @@ class _RespondToInfoRequestPageContentState
                           const SizedBox(height: 16),
                         ],
                       ] else if (isFetching)
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                        const InfoRequestShimmer()
                       else
                         Text(
                           'طلب معلومات رقم: ${widget.infoRequestId}',
@@ -507,10 +505,10 @@ class _RespondToInfoRequestPageContentState
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.close,
                                     size: 20,
-                                    color: Colors.red,
+                                    color: Theme.of(context).colorScheme.error,
                                   ),
                                   onPressed: () {
                                     final updatedAttachments =

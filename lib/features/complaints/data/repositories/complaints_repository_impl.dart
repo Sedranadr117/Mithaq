@@ -87,13 +87,54 @@ class ComplaintRepositoryImpl extends ComplaintRepository {
   Future<Either<Failure, ComplaintsPageEntity>> getAllComplaints({
     int page = 0,
     int size = 10,
-    String? status,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteComplaints = await remoteDataSource.getAllComplaints(
           page: page,
           size: size,
+        );
+        return Right(remoteComplaints);
+      } on ServerException catch (e) {
+        return Left(
+          Failure(
+            errMessage: e.errorModel.errorMessage,
+            statusCode: e.errorModel.status,
+          ),
+        );
+      } catch (e) {
+        return Left(
+          Failure(
+            errMessage: 'Unexpected error: ${e.toString()}',
+            statusCode: 500,
+          ),
+        );
+      }
+    } else {
+      return Left(Failure(errMessage: 'لا يوجد اتصال بالإنترنت..'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ComplaintsPageEntity>> filterComplaints({
+    int page = 0,
+    int size = 10,
+    String? status,
+    String? type,
+    String? governorate,
+    String? governmentAgency,
+    int? citizenId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteComplaints = await remoteDataSource.filterComplaints(
+          page: page,
+          size: size,
+          status: status,
+          type: type,
+          governorate: governorate,
+          governmentAgency: governmentAgency,
+          citizenId: citizenId,
         );
         return Right(remoteComplaints);
       } on ServerException catch (e) {

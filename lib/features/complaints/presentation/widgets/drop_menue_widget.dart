@@ -1,3 +1,4 @@
+import 'package:complaint_app/config/themes/app_colors.dart';
 import 'package:complaint_app/features/complaints/presentation/bloc/dropdown/dropdown_cubit.dart';
 import 'package:complaint_app/features/complaints/presentation/bloc/dropdown/dropdown_state.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class CustomDropdown<T> extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade400),
+                  border: Border.all(color: AppColors.textDisabledLight),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
