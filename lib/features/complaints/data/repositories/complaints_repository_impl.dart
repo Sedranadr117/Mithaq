@@ -7,8 +7,7 @@ import '../../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/exceptions.dart';
 import '../../../../../../core/errors/failure.dart';
 import '../../../../../../core/params/params.dart';
-import '../../domain/repositories/complaints_repository.dart';
-import '../datasources/complaints_remote_data_source.dart';
+import 'package:mime/mime.dart';
 
 class ComplaintRepositoryImpl extends ComplaintRepository {
   final NetworkInfo networkInfo;

@@ -11,7 +11,11 @@ plugins {
 android {
     namespace = "com.example.complaint_app"
     compileSdk = flutter.compileSdkVersion
+<<<<<<< HEAD
+    ndkVersion = "29.0.14206865"
+=======
 
+>>>>>>> auth
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
