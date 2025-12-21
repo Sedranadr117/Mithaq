@@ -23,22 +23,29 @@ dependencies:
   get_it: ^9.1.0
   equatable: ^2.0.7
   file_picker: ^8.0.0
+  firebase_core: ^4.2.1
+  firebase_messaging: ^16.0.4
+  flutter_local_notifications: 
+  flutter_launcher_icons: ^0.13.1
+  device_info_plus: ^10.1.2
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/whiteLogo.png"
+  adaptive_icon_background: "#215E68"
+  adaptive_icon_foreground: assets/whiteLogo.png
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  flutter_lints: ^5.0.0
 
 
 flutter:
   uses-material-design: true
-  # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/images/
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-
+    - assets/
   # example:
   # fonts:
   #   - family: Schyler
@@ -57,3 +64,37 @@ flutter_assets:
   output_path: lib/config/themes
   filename: app_assets.dart
 
+flutter_native_splash:
+  # This package generates native code to customize Flutter's default white native splash screen
+  # with background color and splash image.
+  # Customize the parameters below, and run the following command in the terminal:
+  # flutter pub run flutter_native_splash:create
+  # To restore Flutter's default white splash screen, run the following command in the terminal:
+  # flutter pub run flutter_native_splash:remove
+
+  # Color of the splash screen background
+  color: "#215E68"
+
+  # Image used for the splash screen (centered)
+  image: assets/whiteLogo.png
+
+  # Android 12+ adaptive icon settings
+  android_12:
+    # The image parameter sets the splash screen icon
+    # (it's recommended to use a solid color as the background)
+    image: assets/whiteLogo.png
+    color: "#215E68"
+    # Optional: Set icon background color for Android 12+
+    icon_background_color: "#215E68"
+
+  # iOS settings
+  ios: true
+  
+  # Android settings
+  android: true
+  
+  # Web settings (optional)
+  web: false
+  
+  # Full screen mode
+  fullscreen: false
