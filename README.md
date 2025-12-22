@@ -1,6 +1,6 @@
-# 📱 Government Complaint Management System - Citizen Mobile App (Flutter)
+# 📱 ميثـــاق (Mithaq) - Government Complaint Management System
 
-This is the official mobile application for citizens, developed using **Flutter**, as part of the integrated Government Complaint Management System.
+**ميثـــاق** (Mithaq) is the official mobile application for citizens, developed using **Flutter**, as part of the integrated Government Complaint Management System.
 
 The application provides a seamless and transparent digital channel for citizens to report complaints against specific government entities and track their resolution process.
 
@@ -10,8 +10,8 @@ The application provides a seamless and transparent digital channel for citizens
 
 * **Easy Account Management:** Secure registration and login using email and password, with account confirmation via One-Time Password (OTP).
 * **Simple Submission:** Citizens can submit new complaints by specifying the type, governorate, government entity, location, and a detailed description.
-* **Attachment Support:** Ability to upload supporting documents or images (PNG or PDF format) to the complaint.
-* **Real-time Tracking:** View all submitted complaints and filter them based on their status (**New**, **In Progress**, **Completed**, **Rejected**).
+* **Attachment Support:** Ability to upload supporting documents or images (PNG, JPG, JPEG, or PDF format) with file size validation (default 10MB per file).
+* **Real-time Tracking:** View all submitted complaints and filter them based on their status (**New**, **In Progress**, **Completed**, **Rejected**, **Info Requested**, **Resolved**). Filter switching works seamlessly, including switching back to "All" to view all complaints.
 * **Info Request Handling:** Respond to information requests from government employees with supporting documents and details.
 * **Instant Notifications:** Receive instant alerts for key status changes (e.g., successful receipt, status change, or a request for additional information from a government employee).
 * **Reference Search:** Search for a specific complaint using its unique reference number.
@@ -43,6 +43,9 @@ The application provides a seamless and transparent digital channel for citizens
 * `sizer` - Responsive design
 * `flutter_native_splash` - Native splash screen configuration
 * `flutter_launcher_icons` - App icon generation
+* `dartz` - Functional programming (Either/Left/Right for error handling)
+* `equatable` - Value equality for state management
+* `device_info_plus` - Device information for notifications
 
 ---
 
@@ -125,20 +128,70 @@ Each feature follows Clean Architecture with:
 
 ## 🎯 Project Scope
 
-This application focuses on empowering citizens to initiate and follow up on the complete **complaint lifecycle**, ensuring transparency and efficient communication with government bodies. It is an essential component designed for usability and accessibility across various screen sizes.
+**ميثـــاق** (Mithaq) focuses on empowering citizens to initiate and follow up on the complete **complaint lifecycle**, ensuring transparency and efficient communication with government bodies. It is an essential component designed for usability and accessibility across various screen sizes.
+
+## 🐛 Error Handling
+
+The app includes comprehensive error handling with:
+* User-friendly Arabic error messages for common backend errors
+* Network connectivity checking
+* Secure token management with automatic logout on 401 errors
+* Graceful handling of file upload errors
+* Proper error states in UI with retry mechanisms
+* Firebase error handling - app continues to work even if FCM token retrieval fails
+
+## 🔧 Troubleshooting
+
+### Firebase FIS_AUTH_ERROR
+
+If you encounter `FIS_AUTH_ERROR` when running the app, it means your app's SHA-1/SHA-256 fingerprints are not registered in Firebase Console. The app will continue to work, but push notifications won't function.
+
+**To fix this:**
+
+1. **Get your SHA-1 fingerprint:**
+   ```bash
+   # For debug keystore (default)
+   keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+   
+   # For Windows
+   keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+   ```
+
+2. **Get your SHA-256 fingerprint:**
+   ```bash
+   # Same command, look for SHA-256 in the output
+   ```
+
+3. **Add fingerprints to Firebase:**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project (mithaq-956c5)
+   - Go to Project Settings → Your apps → Android app
+   - Click "Add fingerprint"
+   - Paste your SHA-1 and SHA-256 fingerprints
+   - Download the updated `google-services.json` and replace the one in `android/app/`
+
+4. **Rebuild the app:**
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter run
+   ```
+
+**Note:** The app now handles this error gracefully and won't crash. Push notifications will simply be disabled until the fingerprints are added.
 
 ---
 
 ## 📝 Recent Updates
 
-* Enhanced info request handling with dedicated response page
-* Added shimmer loading effects for better UX
-* Improved complaints data source and repository implementation
-* Updated API endpoints and data models
-* Enhanced UI components (file picker, dropdown menu, custom text fields)
-* Better error handling and state management
-* Fixed splash screen logo sizing and configuration
-* Optimized splash screen assets for better display on all screen sizes
+* **App Rebranding:** Changed app name to **ميثـــاق** (Mithaq) across all platforms
+* **Filter Bug Fix:** Fixed issue where switching back to "All" filter would show "no complaints found" - now correctly displays all complaints
+* **Enhanced Error Handling:** Improved error messages with user-friendly Arabic translations for backend errors (Index out of bounds, EntityManager transaction errors, etc.)
+* **File Upload Improvements:** Added safer filename extraction and better file handling with size validation
+* **Enhanced Info Request Handling:** Dedicated response page for handling information requests from government employees
+* **UI Improvements:** Added shimmer loading effects, enhanced file picker with multiple file support, improved dropdown menus and custom text fields
+* **Better State Management:** Improved BLoC implementation for complaints filtering and pagination
+* **Splash Screen Optimization:** Fixed splash screen logo sizing and optimized assets for all screen sizes
+* **Repository Updates:** Improved data source and repository implementation with better error handling
 
 ---
 

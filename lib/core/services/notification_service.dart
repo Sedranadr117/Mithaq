@@ -24,24 +24,32 @@ class NotificationService {
   Function(RemoteMessage)? onNotificationClicked;
 
   Future<void> init() async {
-    await _initLocalNotifications();
-    await _requestPermission();
+    try {
+      await _initLocalNotifications();
+      await _requestPermission();
 
-    // save token & refresh listening
-    await getAndSaveToken();
-    _listenTokenRefresh();
+      // save token & refresh listening (may fail due to FIS_AUTH_ERROR)
+      await getAndSaveToken();
+      _listenTokenRefresh();
 
-    // foreground notification
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      // foreground notification
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
-    // app opened from notification (background)
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+      // app opened from notification (background)
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
 
-    // background & terminated messages
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      // background & terminated messages
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    // app opened from terminated via notification
-    _checkIfAppOpenedFromTerminated();
+      // app opened from terminated via notification
+      _checkIfAppOpenedFromTerminated();
+    } catch (e) {
+      // Log error but don't crash the app
+      debugPrint("⚠️ NotificationService initialization error: $e");
+      debugPrint(
+        "💡 App will continue without push notifications. Check Firebase configuration.",
+      );
+    }
   }
 
   Future<void> _requestPermission() async {
@@ -72,23 +80,40 @@ class NotificationService {
   }
 
   Future<void> getAndSaveToken() async {
-    final token = await _messaging.getToken();
-    print("🔑 FCM Token: $token");
+    try {
+      final token = await _messaging.getToken();
+      print("🔑 FCM Token: $token");
 
-    if (token != null) {
-      await SecureStorageHelper().saveData(key: fcmTokenKey, value: token);
+      if (token != null) {
+        await SecureStorageHelper().saveData(key: fcmTokenKey, value: token);
+      }
+    } catch (e) {
+      // Handle FIS_AUTH_ERROR and other Firebase errors gracefully
+      debugPrint("⚠️ Failed to get FCM token: $e");
+      debugPrint(
+        "💡 This might be due to missing SHA-1/SHA-256 fingerprints in Firebase Console.",
+      );
+      debugPrint(
+        "💡 The app will continue to work, but push notifications may not function.",
+      );
+      // Don't throw - allow app to continue without FCM token
     }
   }
 
   void _listenTokenRefresh() {
-    _messaging.onTokenRefresh.listen((newToken) async {
-      print("♻️ Token Refreshed: $newToken");
-      await SecureStorageHelper().saveData(key: fcmTokenKey, value: newToken);
+    _messaging.onTokenRefresh.listen(
+      (newToken) async {
+        print("♻️ Token Refreshed: $newToken");
+        await SecureStorageHelper().saveData(key: fcmTokenKey, value: newToken);
 
-      // Notify that token was refreshed - UI can send it to server
-      // This is handled by the callback system in main.dart
-      debugPrint('📤 FCM token refreshed, should be sent to server');
-    });
+        // Notify that token was refreshed - UI can send it to server
+        // This is handled by the callback system in main.dart
+        debugPrint('📤 FCM token refreshed, should be sent to server');
+      },
+      onError: (error) {
+        debugPrint("⚠️ Token refresh stream error: $error");
+      },
+    );
   }
 
   Future<String?> getSavedToken() {
