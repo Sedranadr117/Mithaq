@@ -94,7 +94,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                           context,
                         ).scaffoldBackgroundColor,
                         title: const Text(
-                          "تسجيل الدخول",
+                          "تسجيل الخروج",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         content: const Text(
