@@ -7,6 +7,9 @@ import 'package:complaint_app/features/complaints/presentation/bloc/show_all/sho
 import 'package:complaint_app/features/complaints/presentation/pages/add_complaints_page.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/home_header.dart';
 import 'package:complaint_app/features/complaints/presentation/widgets/recent_complaint_tile.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:complaint_app/features/notification/presentation/bloc/notification_event.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,9 +58,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LogoutSuccessState) {
           context.pushReplacementPage(const WelcomeScreen());
+          context.read<NotificationBloc>().add(RemoveFcmTokenEvent());
+          await FirebaseMessaging.instance.deleteToken();
         } else if (state is AuthErrorState) {
           // Even if logout API fails, navigate to welcome screen since local data is cleared
           context.pushReplacementPage(const WelcomeScreen());

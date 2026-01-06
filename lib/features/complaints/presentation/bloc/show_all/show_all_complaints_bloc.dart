@@ -28,20 +28,21 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
         };
 
         final String? incomingFilter = event.status;
-        
+
         // Check if filter actually changed (including switching to "all" which is null)
         final bool filterChanged = incomingFilter != currentFilter;
-        
+
         // Determine which filter to use:
         // - If incomingFilter is provided (including null for "all"), use it
         // - If incomingFilter is null and no refresh, it's pagination - use currentFilter
-        final String? filterToUse = (event.refresh || filterChanged) 
-            ? incomingFilter  // Use incoming filter when refreshing or filter changed
-            : currentFilter;  // Keep current filter for pagination
+        final String? filterToUse = (event.refresh || filterChanged)
+            ? incomingFilter // Use incoming filter when refreshing or filter changed
+            : currentFilter; // Keep current filter for pagination
 
         if (event.refresh || filterChanged) {
           currentPage = 0;
-          currentFilter = filterToUse;  // This will be null when "all" is selected
+          currentFilter =
+              filterToUse; // This will be null when "all" is selected
           complaints.clear();
           emit(ComplaintLoading());
         }
@@ -77,6 +78,23 @@ class ComplaintsBloc extends Bloc<ComplaintsEvent, ComplaintsState> {
             try {
               // API filters by status, so add all results directly
               complaints.addAll(data.content);
+
+              // Always sort complaints so that the most recently created are on top
+              complaints.sort((a, b) {
+                final aDate = a.createdAt != null
+                    ? DateTime.tryParse(a.createdAt!)
+                    : null;
+                final bDate = b.createdAt != null
+                    ? DateTime.tryParse(b.createdAt!)
+                    : null;
+
+                if (aDate == null && bDate == null) return 0;
+                if (aDate == null) return 1; // nulls go to bottom
+                if (bDate == null) return -1;
+
+                // Newest first
+                return bDate.compareTo(aDate);
+              });
 
               if (data.hasNext) currentPage++;
 

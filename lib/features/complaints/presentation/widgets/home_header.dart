@@ -25,9 +25,9 @@ class _HomeHeaderState extends State<HomeHeader> {
       'الكل',
       'قيد المعالجة',
       'مرفوضة',
-      'منجزة',
       'جديدة',
       'طلب معلومات',
+      'تم الحل',
     ];
 
     return Column(

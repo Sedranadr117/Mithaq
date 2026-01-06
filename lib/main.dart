@@ -12,6 +12,7 @@ import 'package:complaint_app/features/complaints/presentation/bloc/show_all/sho
 import 'package:complaint_app/features/complaints/presentation/pages/add_complaints_page.dart';
 import 'package:complaint_app/core/services/notification_service.dart';
 import 'package:complaint_app/features/complaints/presentation/pages/complaints_page.dart';
+import 'package:complaint_app/features/notification/presentation/pages/notification_page.dart';
 import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:complaint_app/features/notification/presentation/bloc/notification_event.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +48,11 @@ void main() async {
     notificationBloc.add(NotificationClickedEvent(message: message));
     debugPrint(
       '📬 Notification clicked globally: ${message.notification?.title}',
+    );
+
+    // Navigate to the notification screen when a notification is tapped
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(builder: (_) => const NotificationPage()),
     );
   };
 
@@ -87,6 +95,7 @@ class MyApp extends StatelessWidget {
           return Sizer(
             builder: (context, orientation, deviceType) {
               return MaterialApp(
+                navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightTheme(context),
 
