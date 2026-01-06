@@ -20,14 +20,16 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -38,7 +40,8 @@ class _SignupScreenState extends State<SignupScreen> {
       // 2. إطلاق حدث التسجيل (RegisterUserEvent)
       BlocProvider.of<AuthBloc>(context).add(
         RegisterUserEvent(
-          name: _nameController.text,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
           email: _emailController.text,
           password: _passwordController.text,
         ),
@@ -58,9 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is RegisterSuccessState) {
-            context.pushReplacementPage(
-              OtpScreen(email: _emailController.text),
-            );
+            context.pushAndRemoveUntilPage(OtpScreen());
           } else if (state is AuthErrorState) {
             // إظهار رسالة الخطأ
             ScaffoldMessenger.of(
@@ -129,15 +130,33 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                             SizedBox(height: 4.0.h),
-                            CustomTextField(
-                              labelText: 'الاسم الكامل',
-                              icon: 'person',
-                              isPassword: false,
-                              controller: _nameController,
-                              validator: (value) =>
-                                  FormValidators.userNameValidator(value),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    labelText: 'الاسم الأول',
+                                    icon: 'person',
+                                    isPassword: false,
+                                    controller: _firstNameController,
+                                    validator: (value) =>
+                                        FormValidators.userNameValidator(value),
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                Expanded(
+                                  child: CustomTextField(
+                                    labelText: 'الكنية',
+                                    icon: 'people',
+                                    isPassword: false,
+                                    controller: _lastNameController,
+                                    validator: (value) =>
+                                        FormValidators.userNameValidator(value),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 2.5.h),
+
+                            SizedBox(height: 2.h),
                             CustomTextField(
                               labelText: 'البريد الإلكتروني',
                               icon: 'email',
@@ -146,7 +165,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               validator: (value) =>
                                   FormValidators.emailValidator(value),
                             ),
-                            SizedBox(height: 2.5.h),
+                            SizedBox(height: 2.h),
                             CustomTextField(
                               labelText: 'كلمة المرور',
                               icon: 'lock',
@@ -170,19 +189,31 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
 
                             SizedBox(height: 2.5.h),
-                            TextButton(
-                              onPressed: () {
-                                context.pushReplacementPage(
-                                  const SignInScreen(),
-                                );
-                              },
-                              child: Text(
-                                'لديك بالفعل حساب؟ سجل دخول',
-                                style: context.text.bodyMedium!.copyWith(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('لديك بالفعل حساب؟'),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size(0, 0),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    context.pushReplacementPage(
+                                      const SignInScreen(),
+                                    );
+                                  },
+                                  child: Text(
+                                    ' سجل دخول',
+                                    style: context.text.bodyMedium!.copyWith(
+                                      color: context.colors.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ],
                         ),

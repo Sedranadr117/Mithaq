@@ -23,6 +23,8 @@ class AuthRepositoryImpl extends AuthRepository {
   static const String USER_FIRST_NAME_KEY = 'USER_FIRST_NAME';
   static const String USER_LAST_NAME_KEY = 'USER_LAST_NAME';
   static const String USER_IS_ACTIVE_KEY = 'USER_IS_ACTIVE';
+  static const String registrationInProgress = 'registration_in_progress';
+  final secureStorage = sl<SecureStorageHelper>();
 
   @override
   Future<Either<Failure, AuthEntity>> logIn({
@@ -32,9 +34,6 @@ class AuthRepositoryImpl extends AuthRepository {
       try {
         final remoteLogIn = await remoteDataSource.logIn(params);
 
-        // Save token and login info to SecureStorage
-        final secureStorage = sl<SecureStorageHelper>();
-
         // Save token
         if (remoteLogIn.token.isNotEmpty) {
           await secureStorage.saveData(
@@ -43,6 +42,11 @@ class AuthRepositoryImpl extends AuthRepository {
           );
           debugPrint('✅ Token saved to SecureStorage');
         }
+
+        await secureStorage.saveData(
+          key: registrationInProgress,
+          value: 'false',
+        );
 
         // Save user info
         await secureStorage.saveData(
@@ -57,10 +61,10 @@ class AuthRepositoryImpl extends AuthRepository {
           key: USER_LAST_NAME_KEY,
           value: remoteLogIn.lastName,
         );
-        await secureStorage.saveData(
-          key: USER_IS_ACTIVE_KEY,
-          value: remoteLogIn.isActive.toString(),
-        );
+        // await secureStorage.saveData(
+        //   key: USER_IS_ACTIVE_KEY,
+        //   value: remoteLogIn.isActive.toString(),
+        // );
 
         debugPrint('✅ Login info saved to SecureStorage: ${remoteLogIn.email}');
         return Right(remoteLogIn);
@@ -87,6 +91,13 @@ class AuthRepositoryImpl extends AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.register(params);
+        await secureStorage.saveData(key: USER_EMAIL_KEY, value: params.email);
+
+        await secureStorage.saveData(
+          key: registrationInProgress,
+          value: 'true',
+        );
+
         return Right(unit);
       } on ServerException catch (e) {
         return Left(
@@ -113,6 +124,12 @@ class AuthRepositoryImpl extends AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.verifyOtp(params);
+        await secureStorage.saveData(
+          key: registrationInProgress,
+          value: 'false',
+        );
+        await secureStorage.remove(USER_EMAIL_KEY);
+
         return Right(unit);
       } on ServerException catch (e) {
         return Left(
@@ -163,9 +180,7 @@ class AuthRepositoryImpl extends AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.logout();
-
-        // Clear all user data from SecureStorage
-        final secureStorage = sl<SecureStorageHelper>();
+        await secureStorage.remove(registrationInProgress);
         await secureStorage.remove(AUTH_TOKEN_KEY);
         await secureStorage.remove(USER_EMAIL_KEY);
         await secureStorage.remove(USER_FIRST_NAME_KEY);
@@ -176,7 +191,7 @@ class AuthRepositoryImpl extends AuthRepository {
         return Right(unit);
       } on ServerException catch (e) {
         // Even if API call fails, clear local data
-        final secureStorage = sl<SecureStorageHelper>();
+        await secureStorage.remove(registrationInProgress);
         await secureStorage.remove(AUTH_TOKEN_KEY);
         await secureStorage.remove(USER_EMAIL_KEY);
         await secureStorage.remove(USER_FIRST_NAME_KEY);
@@ -192,7 +207,7 @@ class AuthRepositoryImpl extends AuthRepository {
       }
     } else {
       // Even without internet, clear local data
-      final secureStorage = sl<SecureStorageHelper>();
+      await secureStorage.remove(registrationInProgress);
       await secureStorage.remove(AUTH_TOKEN_KEY);
       await secureStorage.remove(USER_EMAIL_KEY);
       await secureStorage.remove(USER_FIRST_NAME_KEY);

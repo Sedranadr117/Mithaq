@@ -3,6 +3,7 @@ import 'package:complaint_app/config/themes/app_theme.dart';
 import 'package:complaint_app/core/databases/cache/cache_helper.dart';
 import 'package:complaint_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:complaint_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:complaint_app/features/auth/presentation/pages/otp_page.dart';
 import 'package:complaint_app/features/auth/presentation/pages/welcome_page.dart';
 import 'package:complaint_app/features/complaints/domain/usecases/add_complaints.dart';
 import 'package:complaint_app/features/complaints/domain/usecases/get_all_complaint.dart';
@@ -12,7 +13,6 @@ import 'package:complaint_app/features/complaints/presentation/bloc/show_all/sho
 import 'package:complaint_app/features/complaints/presentation/pages/add_complaints_page.dart';
 import 'package:complaint_app/core/services/notification_service.dart';
 import 'package:complaint_app/features/complaints/presentation/pages/complaints_page.dart';
-import 'package:complaint_app/features/notification/presentation/pages/notification_page.dart';
 import 'package:complaint_app/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:complaint_app/features/notification/presentation/bloc/notification_event.dart';
 import 'package:flutter/foundation.dart';
@@ -21,8 +21,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,11 +46,6 @@ void main() async {
     notificationBloc.add(NotificationClickedEvent(message: message));
     debugPrint(
       '📬 Notification clicked globally: ${message.notification?.title}',
-    );
-
-    // Navigate to the notification screen when a notification is tapped
-    navigatorKey.currentState?.push(
-      MaterialPageRoute(builder: (_) => const NotificationPage()),
     );
   };
 
@@ -95,7 +88,6 @@ class MyApp extends StatelessWidget {
           return Sizer(
             builder: (context, orientation, deviceType) {
               return MaterialApp(
-                navigatorKey: navigatorKey,
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightTheme(context),
 
@@ -110,20 +102,45 @@ class MyApp extends StatelessWidget {
                     child: child!,
                   );
                 },
-                home: FutureBuilder<String?>(
-                  future: secureStorage.getSavedAuthToken(
-                    AuthRepositoryImpl.AUTH_TOKEN_KEY,
-                  ),
+                home: FutureBuilder<Map<String, String?>>(
+                  future: () async {
+                    final token = await secureStorage.getSavedAuthToken(
+                      AuthRepositoryImpl.AUTH_TOKEN_KEY,
+                    );
+
+                    final registrationFlag = await secureStorage.getString(
+                      AuthRepositoryImpl.registrationInProgress,
+                    );
+
+                    return {
+                      'token': token,
+                      'registrationInProgress': registrationFlag,
+                    };
+                  }(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Scaffold(
                         body: Center(child: CircularProgressIndicator()),
                       );
                     }
-                    final token = snapshot.data;
-                    return (token == null || token.isEmpty)
-                        ? const WelcomeScreen()
-                        : const HomePage();
+
+                    final data = snapshot.data ?? {};
+                    final token = data['token'];
+                    final registrationInProgress =
+                        data['registrationInProgress'];
+
+                    // 1️⃣ Logged in → Home
+                    if (token != null && token.isNotEmpty) {
+                      return const HomePage();
+                    }
+
+                    // 2️⃣ Register started but OTP not finished → OTP
+                    if (registrationInProgress == 'true') {
+                      return OtpScreen();
+                    }
+
+                    // 3️⃣ Default
+                    return const WelcomeScreen();
                   },
                 ),
               );

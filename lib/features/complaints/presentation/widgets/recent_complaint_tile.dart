@@ -42,8 +42,8 @@ class RecentComplaintTile extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(3.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     // Type and Status (Top Row)
                     Row(

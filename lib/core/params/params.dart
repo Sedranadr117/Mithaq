@@ -7,16 +7,18 @@ class TemplateParams {
 }
 
 class SignUpParams {
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final String password;
   SignUpParams({
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.password,
   });
   Map<String, dynamic> toJson() {
-    return {'name': name, 'email': email, 'password': password};
+    return {'firstName': firstName, 'lastName': lastName, 'email': email, 'password': password};
   }
 }
 

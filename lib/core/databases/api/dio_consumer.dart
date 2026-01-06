@@ -14,9 +14,9 @@ class DioConsumer extends ApiConsumer {
     dio.options.baseUrl = EndPoints.baserUrl;
 
     // Configure timeouts to prevent long waits
-    dio.options.connectTimeout = const Duration(seconds: 30);
+    dio.options.connectTimeout = const Duration(seconds: 60);
     dio.options.receiveTimeout = const Duration(seconds: 30);
-    dio.options.sendTimeout = const Duration(seconds: 30);
+    dio.options.sendTimeout = const Duration(seconds: 300);
 
     // Add error interceptor to handle 401 (token expired)
     dio.interceptors.add(

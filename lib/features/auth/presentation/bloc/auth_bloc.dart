@@ -37,17 +37,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // ---------------- Login Handler ----------------
 
   void _onLoginUserEvent(LoginUserEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoadingState());
+    try {
+      emit(AuthLoadingState());
 
-    // استخدام LoginParams كما هو متوقع بناءً على ملف params.dart [cite: 42]
-    final result = await loginUseCase(
-      params: SignInParams(email: event.email, password: event.password),
-    );
+      // استخدام LoginParams كما هو متوقع بناءً على ملف params.dart [cite: 42]
+      final result = await loginUseCase(
+        params: SignInParams(email: event.email, password: event.password),
+      );
 
-    result.fold(
-      (failure) => emit(AuthErrorState(message: failure.errMessage)),
-      (authEntity) => emit(LoginSuccessState(authEntity: authEntity)),
-    );
+      result.fold(
+        (failure) => emit(AuthErrorState(message: failure.errMessage)),
+        (authEntity) => emit(LoginSuccessState(authEntity: authEntity)),
+      );
+    } catch (e) {
+      emit(
+        AuthErrorState(message: 'Unexpected error occurred: ${e.toString()}'),
+      );
+    }
   }
 
   // ---------------- Register Handler ----------------
@@ -56,65 +62,90 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     RegisterUserEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoadingState());
+    try {
+      emit(AuthLoadingState());
 
-    // استخدام RegisterParams
-    final result = await registerUseCase(
-      params: SignUpParams(
-        name: event.name,
-        email: event.email,
-        password: event.password,
-      ),
-    );
+      // استخدام RegisterParams
+      final result = await registerUseCase(
+        params: SignUpParams(
+          firstName: event.firstName,
+          lastName: event.lastName,
+          email: event.email,
+          password: event.password,
+        ),
+      );
 
-    result.fold(
-      (failure) => emit(AuthErrorState(message: failure.errMessage)),
-      (authEntity) => emit(RegisterSuccessState()),
-    );
+      result.fold(
+        (failure) => emit(AuthErrorState(message: failure.errMessage)),
+        (authEntity) => emit(RegisterSuccessState()),
+      );
+    } catch (e) {
+      emit(
+        AuthErrorState(message: 'Unexpected error occurred: ${e.toString()}'),
+      );
+    }
   }
 
   // ---------------- OTP Verification Handler ----------------
 
   void _onVerifyOtpEvent(VerifyOtpEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoadingState());
+    try {
+      emit(AuthLoadingState());
 
-    // استخدام OtpParams
-    final result = await otpUseCase(
-      params: VerifyOtpParams(email: event.email, otp: event.otpCode),
-    );
+      // استخدام OtpParams
+      final result = await otpUseCase(
+        params: VerifyOtpParams(email: event.email, otp: event.otpCode),
+      );
 
-    result.fold(
-      (failure) => emit(AuthErrorState(message: failure.errMessage)),
-      (_) => emit(const OtpVerificationSuccessState()),
-    );
+      result.fold(
+        (failure) => emit(AuthErrorState(message: failure.errMessage)),
+        (_) => emit(const OtpVerificationSuccessState()),
+      );
+    } catch (e) {
+      emit(
+        AuthErrorState(message: 'Unexpected error occurred: ${e.toString()}'),
+      );
+    }
   }
 
   // ---------------- Resend OTP Handler ----------------
 
   void _onResendOtpEvent(ResendOtpEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoadingState());
+    try {
+      emit(AuthLoadingState());
 
-    // استخدام ResendOtpParams
-    final result = await resendOtpUseCase(
-      params: ReSendOtpParams(email: event.email),
-    );
+      // استخدام ResendOtpParams
+      final result = await resendOtpUseCase(
+        params: ReSendOtpParams(email: event.email),
+      );
 
-    result.fold(
-      (failure) => emit(AuthErrorState(message: failure.errMessage)),
-      (_) => emit(const OtpResendSuccessState()),
-    );
+      result.fold(
+        (failure) => emit(AuthErrorState(message: failure.errMessage)),
+        (_) => emit(const OtpResendSuccessState()),
+      );
+    } catch (e) {
+      emit(
+        AuthErrorState(message: 'Unexpected error occurred: ${e.toString()}'),
+      );
+    }
   }
 
   // ---------------- Logout Handler ----------------
 
   void _onLogoutEvent(LogoutEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoadingState());
+    try {
+      emit(AuthLoadingState());
 
-    final result = await logoutUseCase();
+      final result = await logoutUseCase();
 
-    result.fold(
-      (failure) => emit(AuthErrorState(message: failure.errMessage)),
-      (_) => emit(const LogoutSuccessState()),
-    );
+      result.fold(
+        (failure) => emit(AuthErrorState(message: failure.errMessage)),
+        (_) => emit(const LogoutSuccessState()),
+      );
+    } catch (e) {
+      emit(
+        AuthErrorState(message: 'Unexpected error occurred: ${e.toString()}'),
+      );
+    }
   }
 }

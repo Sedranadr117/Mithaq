@@ -15,6 +15,13 @@ extension NavigatorExtension on BuildContext {
     Navigator.of(this).pop(result);
   }
 
+  Future<T?> pushAndRemoveUntilPage<T>(Widget page) {
+    return Navigator.of(this).pushAndRemoveUntil<T>(
+      MaterialPageRoute(builder: (_) => page),
+      (route) => false,
+    );
+  }
+
   void popUntilFirst() {
     Navigator.of(this).popUntil((route) => route.isFirst);
   }
